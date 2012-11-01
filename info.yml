@@ -1,0 +1,65 @@
+# expected fields in the configuration file for this app
+configuration:
+    deny_permissions:
+        type: list
+        values: {type: shotgun_permission_group}
+        allows_empty: True
+        description: "An optional parameter which lets you limit the visibility of this app. 
+                        If you for example put in ['Artist'] as the value for this parameter, 
+                        any user belonging to the shotgun permissions group Artist will not be 
+                        able to see or execute the App."
+
+    deny_platforms:
+        type: list
+        values: {type: str}
+        allows_empty: True
+        description: "An optional parameter which lets you turn off this app on certain platforms. 
+                        If you don't want it to appear on the Tank action menu for a platform, just 
+                        include it in the the deny_platforms list. Valid values are
+                        Windows, Mac and Linux."    
+    tank_published_types :
+        type: list
+        values: { type: tank_type }
+        allows_empty: True
+        default : [ "Plate", "Rendered Image" ]
+    rvio_path_windows:       
+        type: str
+        default_value: "C:\\Program Files (x86)\\Tweak\\RV\\bin\\rvio.exe"
+        description: Rvio path on Windows
+    rvio_path_linux:       
+        type: str
+        default_value: "rvio"
+        description: Rvio path on Linux
+    rvio_path_mac:       
+        type: str
+        default_value: "/Applications/RV64.app/Contents/MacOS/rvio"
+        description: Rvio path on Mac
+
+    codec_windows:       
+        type: str
+        default_value: "avc1"
+        description: Codec to use on Windows
+    codec_linux:       
+        type: str
+        default_value: ""
+        description: Rvio path on Linux
+    codec_mac:       
+        type: str
+        default_value: ""
+        description: Rvio path on Mac
+        
+    width :
+        type : int
+        default : 1024
+    movie_template :
+        type : template
+        required_fields : [name,Sequence,Shot,Step,version]
+        optional_fields : "*"
+
+
+# the Shotgun fields that this app needs in order to operate correctly
+requires_shotgun_fields:
+#Version: 
+#        { "system_name": "sg_uploaded_movie", "type": "text" }
+#        { "system_name": "sg_uploaded_frames", "type": "text" }
+
