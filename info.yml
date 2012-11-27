@@ -55,6 +55,10 @@ configuration:
         type : template
         required_fields : [name,Sequence,Shot,Step,version]
         optional_fields : "*"
+    tank_movie_type :
+        type : tank_type
+        default_value : Movie
+        description : Tank type to use when publishing movies   
 
 
 # the Shotgun fields that this app needs in order to operate correctly

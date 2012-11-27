@@ -48,6 +48,7 @@ class DDDailymaker( Application ):
 		ttypes = self.get_setting("tank_published_types")
 		width = self.get_setting( "width")
 		movie_template = self.get_template( "movie_template" )
+		tank_movie_type = self.get_setting( "tank_movie_type" )
 		system = platform.system()
 		try:
 			rvio_setting = {"Linux": "rvio_path_linux", 
@@ -114,7 +115,7 @@ class DDDailymaker( Application ):
 					published_movie = None
 					for dp in d.get( "downstream_tank_published_files" ) :
 						dpe = self.shotgun.find_one( "TankPublishedFile", [["id", "is", dp['id']]], ["tank_type", "path"])
-						if dpe.get('tank_type').get('name') == 'Movie' :
+						if dpe.get('tank_type').get('name') == tank_movie_type :
 							published_movie = dpe
 							break
 
@@ -124,6 +125,7 @@ class DDDailymaker( Application ):
 						n.update( "working", "Generating movie %s for %s" % ( movie_name, name ) )
 						# Extract field values from the image template
 						fields = img_templ.get_fields(path_on_disk)
+						fields['TankType'] = tank_movie_type
 						movie_path = movie_template.apply_fields(fields)
 						movie_ctx = self.tank.context_from_path( movie_path )
 						# Check if there is already a movie with this path, if so, report an error
@@ -137,7 +139,7 @@ class DDDailymaker( Application ):
 							if e.errno != errno.EEXIST : # Check if it fails only because the directory already exists
 								raise RuntimeError( "Couldn't create %s : %s" % ( movie_dir, e ) )
 						n.update( 'working', 'Generationg movie in the background %s' % movie_path )
-						if True :
+						if False :
 							proc = multiprocessing.Process( target=DDDailymaker.make_movie, args=(path_on_disk, movie_path, rvio_path, width, codec ) )
 							proc.daemon = True
 							proc.start()
@@ -147,7 +149,7 @@ class DDDailymaker( Application ):
 						n.update( 'working', 'Building thumbnail ...' )
 						# Publish the quicktime, with an upstream dependency to the images
 						n.update( "working", "Publishing movie %s" % movie_name )
-						published_movie = tank.util.register_publish( self.tank, movie_ctx , movie_path, movie_name, fields['version'],  tank_type='Movie', thumbnail_path=thumb_path, dependency_paths = [path_on_disk] )
+						published_movie = tank.util.register_publish( self.tank, movie_ctx , movie_path, movie_name, fields['version'],  tank_type=tank_movie_type, thumbnail_path=thumb_path, dependency_paths = [path_on_disk] )
 					# Create the version
 					n.update( "working", "Publishing daily for %s" % name )
 					
